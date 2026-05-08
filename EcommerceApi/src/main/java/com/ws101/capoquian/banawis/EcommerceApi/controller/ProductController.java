@@ -9,25 +9,25 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController // Sinasabi na REST API controller ito. Auto-convert sa JSON
-@RequestMapping("/api/v1/products") // Base path ng lahat ng endpoints dito
+@RestController 
+@RequestMapping("/api/v1/products") 
 public class ProductController {
 
     private final ProductService productService;
 
-    @Autowired // Auto-inject si ProductService galing kay Spring
+    @Autowired 
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
-    // GET /api/v1/products - Kunin lahat ng products
+    
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
-    // GET /api/v1/products/{id} - Kunin isang product gamit ID
+    
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         Product product = productService.getProductById(id);
@@ -38,7 +38,7 @@ public class ProductController {
         }
     }
 
-    // GET /api/v1/products/filter?filterType=category&filterValue=Electronics
+    
     @GetMapping("/filter")
     public ResponseEntity<List<Product>> filterProducts(
             @RequestParam String filterType,
@@ -54,7 +54,7 @@ public class ProductController {
                 filteredProducts = productService.searchProductsByName(filterValue);
                 break;
             case "price":
-                // Simple lang muna: exact price match
+                
                 double price = Double.parseDouble(filterValue);
                 filteredProducts = productService.getAllProducts().stream()
                         .filter(p -> p.getPrice().equals(price))
@@ -66,14 +66,14 @@ public class ProductController {
         return new ResponseEntity<>(filteredProducts, HttpStatus.OK);
     }
 
-    // POST /api/v1/products - Gumawa ng bagong product
+    
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         Product newProduct = productService.createProduct(product);
         return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
     }
 
-    // PUT /api/v1/products/{id} - Palitan buong product
+    
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
         Product updatedProduct = productService.updateProduct(id, product);
@@ -84,7 +84,7 @@ public class ProductController {
         }
     }
 
-    // PATCH /api/v1/products/{id} - Partial update
+    
     @PatchMapping("/{id}")
     public ResponseEntity<Product> patchProduct(@PathVariable Long id, @RequestBody Product patch) {
         Product existingProduct = productService.getProductById(id);
@@ -92,7 +92,7 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         
-        // I-update lang yung fields na hindi null
+        
         if (patch.getName() != null) existingProduct.setName(patch.getName());
         if (patch.getDescription() != null) existingProduct.setDescription(patch.getDescription());
         if (patch.getPrice() != null) existingProduct.setPrice(patch.getPrice());
@@ -104,7 +104,7 @@ public class ProductController {
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
 
-    // DELETE /api/v1/products/{id} - Burahin yung product
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         boolean deleted = productService.deleteProduct(id);

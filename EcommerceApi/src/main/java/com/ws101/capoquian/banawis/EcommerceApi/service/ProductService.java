@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service // Sinasabi kay Spring na ito ay Service class
+@Service 
 public class ProductService {
 
     private final List<Product> products = new ArrayList<>();
-    private Long nextId = 1L; // Para sa auto-increment na ID
+    private Long nextId = 1L;
 
-    // Constructor - dito natin lagay yung 10 sample products
+    
     public ProductService() {
         products.add(new Product(nextId++, "Laptop", "Gaming Laptop 16GB RAM", 75000.00, "Electronics", 10, "https://example.com/laptop.jpg"));
         products.add(new Product(nextId++, "Mouse", "Wireless Gaming Mouse", 1500.00, "Electronics", 25, "https://example.com/mouse.jpg"));
@@ -26,51 +26,50 @@ public class ProductService {
         products.add(new Product(nextId++, "Monitor", "27-inch 144Hz Monitor", 12500.00, "Electronics", 8, "https://example.com/monitor.jpg"));
     }
 
-    // 1. Kunin lahat ng products
+    
     public List<Product> getAllProducts() {
-        return new ArrayList<>(products); // Return copy para hindi ma-modify yung original list
+        return new ArrayList<>(products); 
     }
 
-    // 2. Hanapin yung product gamit ID
+    
     public Product getProductById(Long id) {
         return products.stream()
                 .filter(product -> product.getId().equals(id))
                 .findFirst()
-                .orElse(null); // Return null pag wala
+                .orElse(null); 
     }
 
-    // 3. Gumawa ng bagong product
     public Product createProduct(Product product) {
-        product.setId(nextId++); // Auto-set yung ID
+        product.setId(nextId++); 
         products.add(product);
         return product;
     }
 
-    // 4. I-update yung existing product
+    
     public Product updateProduct(Long id, Product updatedProduct) {
         for (int i = 0; i < products.size(); i++) {
             if (products.get(i).getId().equals(id)) {
-                updatedProduct.setId(id); // Siguraduhin same ID
+                updatedProduct.setId(id); 
                 products.set(i, updatedProduct);
                 return updatedProduct;
             }
         }
-        return null; // Pag walang nahanap
+        return null; 
     }
 
-    // 5. I-delete yung product
+    
     public boolean deleteProduct(Long id) {
         return products.removeIf(product -> product.getId().equals(id));
     }
 
-    // 6. Filter by category
+    
     public List<Product> getProductsByCategory(String category) {
         return products.stream()
                 .filter(product -> product.getCategory().equalsIgnoreCase(category))
                 .collect(Collectors.toList());
     }
 
-    // 6. Filter by name - partial match
+    
     public List<Product> searchProductsByName(String name) {
         return products.stream()
                 .filter(product -> product.getName().toLowerCase().contains(name.toLowerCase()))

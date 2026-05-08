@@ -1,18 +1,24 @@
 package com.ws101.capoquian.banawis.EcommerceApi.model;
 
-   import lombok.Data;
-   import lombok.NoArgsConstructor;
-   import lombok.AllArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 
-   @Data
-   @NoArgsConstructor
-   @AllArgsConstructor
-   public class Product {
-       private Long id;
-       private String name;
-       private String description;
-       private Double price;
-       private String category;
-       private Integer stockQuantity;
-       private String imageUrl;
-   }
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode
+public class Product {
+    private Long id;
+    private String name;
+    private String description;
+    private Double price;
+    private String category;
+    private Integer stockQuantity;
+    private String imageUrl;
+}

@@ -2,7 +2,6 @@ package com.ws101.capoquian.banawis.EcommerceApi.controller;
 
 import com.ws101.capoquian.banawis.EcommerceApi.model.Product;
 import com.ws101.capoquian.banawis.EcommerceApi.service.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,6 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @Autowired 
     public ProductController(ProductService productService) {
         this.productService = productService;
     }

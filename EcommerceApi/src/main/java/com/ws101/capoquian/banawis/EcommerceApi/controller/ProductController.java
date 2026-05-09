@@ -1,115 +1,80 @@
 package com.ws101.capoquian.banawis.EcommerceApi.controller;
 
-import com.ws101.capoquian.banawis.EcommerceApi.model.Product;
-import com.ws101.capoquian.banawis.EcommerceApi.service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-@RestController 
-@RequestMapping("/api/v1/products") 
+/**
+ * REST Controller for Product CRUD operations.
+ * Now persists data to MySQL via ProductService -> ProductRepository.
+ */
+@RestController
+@RequestMapping("/api/products")
 public class ProductController {
 
-    private final ProductService productService;
+    @Autowired
+    private ProductService productService;
 
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
-
-    
+    // GET /api/products - Get all products from DB
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        return ResponseEntity.ok(products);
     }
 
-    
+    // GET /api/products/{id} - Get product by ID
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        Product product = productService.getProductById(id);
-        if (product != null) {
-            return new ResponseEntity<>(product, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Product product = productService.getProductById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+        return ResponseEntity.ok(product);
     }
 
-    
-    @GetMapping("/filter")
-    public ResponseEntity<List<Product>> filterProducts(
-            @RequestParam String filterType,
-            @RequestParam String filterValue) {
-        
-        List<Product> filteredProducts;
-        
-        switch (filterType.toLowerCase()) {
-            case "category":
-                filteredProducts = productService.getProductsByCategory(filterValue);
-                break;
-            case "name":
-                filteredProducts = productService.searchProductsByName(filterValue);
-                break;
-            case "price":
-                
-                double price = Double.parseDouble(filterValue);
-                filteredProducts = productService.getAllProducts().stream()
-                        .filter(p -> p.getPrice().equals(price))
-                        .toList();
-                break;
-            default:
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(filteredProducts, HttpStatus.OK);
-    }
-
-    
+    // POST /api/products - Create new product in DB
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product newProduct = productService.createProduct(product);
-        return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
+        Product savedProduct = productService.createProduct(product);
+        return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
     }
 
-    
+    // PUT /api/products/{id} - Update product in DB
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        Product updatedProduct = productService.updateProduct(id, product);
-        if (updatedProduct != null) {
-            return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
+        Product updatedProduct = productService.updateProduct(id, productDetails);
+        return ResponseEntity.ok(updatedProduct);
     }
 
-    
-    @PatchMapping("/{id}")
-    public ResponseEntity<Product> patchProduct(@PathVariable Long id, @RequestBody Product patch) {
-        Product existingProduct = productService.getProductById(id);
-        if (existingProduct == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        
-        
-        if (patch.getName() != null) existingProduct.setName(patch.getName());
-        if (patch.getDescription() != null) existingProduct.setDescription(patch.getDescription());
-        if (patch.getPrice() != null) existingProduct.setPrice(patch.getPrice());
-        if (patch.getCategory() != null) existingProduct.setCategory(patch.getCategory());
-        if (patch.getStock() != null) existingProduct.setStock(patch.getStock());
-        if (patch.getImageUrl() != null) existingProduct.setImageUrl(patch.getImageUrl());
-        
-        Product updatedProduct = productService.updateProduct(id, existingProduct);
-        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
-    }
-
-    
+    // DELETE /api/products/{id} - Delete from DB
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        boolean deleted = productService.deleteProduct(id);
-        if (deleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // GET /api/products/category/{categoryName} - Filter by category
+    @GetMapping("/category/{categoryName}")
+    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable String categoryName) {
+        List<Product> products = productService.getProductsByCategory(categoryName);
+        return ResponseEntity.ok(products);
+    }
+
+    // GET /api/products/search?min=100&max=500 - Filter by price range
+    @GetMapping("/search")
+    public ResponseEntity<List<Product>> getProductsByPriceRange(
+            @RequestParam BigDecimal min, 
+            @RequestParam BigDecimal max) {
+        List<Product> products = productService.getProductsByPriceRange(min, max);
+        return ResponseEntity.ok(products);
+    }
+
+    // GET /api/products/search/name?keyword=phone - Search by name
+    @GetMapping("/search/name")
+    public ResponseEntity<List<Product>> searchProducts(@RequestParam String keyword) {
+        List<Product> products = productService.searchProducts(keyword);
+        return ResponseEntity.ok(products);
     }
 }

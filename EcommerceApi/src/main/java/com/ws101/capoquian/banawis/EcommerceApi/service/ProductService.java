@@ -1,78 +1,71 @@
 package com.ws101.capoquian.banawis.EcommerceApi.service;
 
-import com.ws101.capoquian.banawis.EcommerceApi.model.Product;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
-@Service 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Service layer for Product business logic.
+ * Now uses ProductRepository instead of manual ArrayList manipulation.
+ */
+@Service
 public class ProductService {
 
-    private final List<Product> products = new ArrayList<>();
-    private Long nextId = 1L;
+    @Autowired
+    private ProductRepository productRepository;
 
-    
-    public ProductService() {
-        products.add(new Product(nextId++, "Laptop", "Gaming Laptop 16GB RAM", 75000.00, "Electronics", 10, "https://example.com/laptop.jpg"));
-        products.add(new Product(nextId++, "Mouse", "Wireless Gaming Mouse", 1500.00, "Electronics", 25, "https://example.com/mouse.jpg"));
-        products.add(new Product(nextId++, "Keyboard", "Mechanical RGB Keyboard", 3500.00, "Electronics", 15, "https://example.com/keyboard.jpg"));
-        products.add(new Product(nextId++, "T-Shirt", "Cotton Black T-Shirt", 499.00, "Clothing", 50, "https://example.com/tshirt.jpg"));
-        products.add(new Product(nextId++, "Jeans", "Denim Blue Jeans", 1299.00, "Clothing", 30, "https://example.com/jeans.jpg"));
-        products.add(new Product(nextId++, "Sneakers", "Running Shoes", 2499.00, "Footwear", 20, "https://example.com/shoes.jpg"));
-        products.add(new Product(nextId++, "Backpack", "Laptop Backpack 15 inch", 999.00, "Accessories", 40, "https://example.com/bag.jpg"));
-        products.add(new Product(nextId++, "Water Bottle", "Insulated Steel Bottle 1L", 650.00, "Accessories", 100, "https://example.com/bottle.jpg"));
-        products.add(new Product(nextId++, "Headphones", "Noise Cancelling Headphones", 8900.00, "Electronics", 12, "https://example.com/headphones.jpg"));
-        products.add(new Product(nextId++, "Monitor", "27-inch 144Hz Monitor", 12500.00, "Electronics", 8, "https://example.com/monitor.jpg"));
-    }
+    @Autowired
+    private CategoryRepository categoryRepository;
 
-    
+    // Get all products from database
     public List<Product> getAllProducts() {
-        return new ArrayList<>(products); 
+        return productRepository.findAll();
     }
 
-    
-    public Product getProductById(Long id) {
-        return products.stream()
-                .filter(product -> product.getId().equals(id))
-                .findFirst()
-                .orElse(null); 
+    // Get product by ID
+    public Optional<Product> getProductById(Long id) {
+        return productRepository.findById(id);
     }
 
+    // Create new product
     public Product createProduct(Product product) {
-        product.setId(nextId++); 
-        products.add(product);
-        return product;
+        return productRepository.save(product);
     }
 
-    
-    public Product updateProduct(Long id, Product updatedProduct) {
-        for (int i = 0; i < products.size(); i++) {
-            if (products.get(i).getId().equals(id)) {
-                updatedProduct.setId(id); 
-                products.set(i, updatedProduct);
-                return updatedProduct;
-            }
-        }
-        return null; 
+    // Update existing product
+    public Product updateProduct(Long id, Product productDetails) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+        
+        product.setName(productDetails.getName());
+        product.setDescription(productDetails.getDescription());
+        product.setPrice(productDetails.getPrice());
+        product.setStock(productDetails.getStock());
+        product.setCategory(productDetails.getCategory());
+        
+        return productRepository.save(product);
     }
 
-    
-    public boolean deleteProduct(Long id) {
-        return products.removeIf(product -> product.getId().equals(id));
+    // Delete product
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
     }
 
-    
-    public List<Product> getProductsByCategory(String category) {
-        return products.stream()
-                .filter(product -> product.getCategory().equalsIgnoreCase(category))
-                .collect(Collectors.toList());
+    // Custom query: Find by category name
+    public List<Product> getProductsByCategory(String categoryName) {
+        return productRepository.findByCategoryName(categoryName);
     }
 
-    
-    public List<Product> searchProductsByName(String name) {
-        return products.stream()
-                .filter(product -> product.getName().toLowerCase().contains(name.toLowerCase()))
-                .collect(Collectors.toList());
+    // Custom query: Find by price range using JPQL
+    public List<Product> getProductsByPriceRange(BigDecimal min, BigDecimal max) {
+        return productRepository.findProductsByPriceRange(min, max);
+    }
+
+    // Custom query: Search products by name
+    public List<Product> searchProducts(String keyword) {
+        return productRepository.findByNameContainingIgnoreCase(keyword);
     }
 }

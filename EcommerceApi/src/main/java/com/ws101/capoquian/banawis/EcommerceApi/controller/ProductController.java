@@ -95,7 +95,7 @@ public class ProductController {
         if (patch.getDescription() != null) existingProduct.setDescription(patch.getDescription());
         if (patch.getPrice() != null) existingProduct.setPrice(patch.getPrice());
         if (patch.getCategory() != null) existingProduct.setCategory(patch.getCategory());
-        if (patch.getStockQuantity() != null) existingProduct.setStockQuantity(patch.getStockQuantity());
+        if (patch.getStock() != null) existingProduct.setStock(patch.getStock());
         if (patch.getImageUrl() != null) existingProduct.setImageUrl(patch.getImageUrl());
         
         Product updatedProduct = productService.updateProduct(id, existingProduct);

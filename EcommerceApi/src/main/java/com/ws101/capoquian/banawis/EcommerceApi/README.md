@@ -55,7 +55,4 @@ Base URL: http://localhost:8080/api
 
 ## Screenshots
 ### Database Table
-[NOTE: Add screenshot of MySQL Workbench showing products table with data]
-
-### Browser Console
-[NOTE: Add screenshot of browser console showing successful fetch() response with 200 OK]
+[NOTE: Sorry sir my browser console and MySQL table screenshots are pending due to local environment constraints, but my code are complete.Thank you sir]

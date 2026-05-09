@@ -54,5 +54,4 @@ Base URL: http://localhost:8080/api
 5. CORS is configured to allow http://localhost:5500
 
 ## Screenshots
-### Database Table
 [NOTE: Sorry sir my browser console and MySQL table screenshots are pending due to local environment constraints, but my code are complete.Thank you sir]

@@ -32,7 +32,7 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    public Product(Long nextId, String string, String string2, double d, String string3, int i, String string4Long nextId, String string1, String string2, double d, String string3, int i1, String string4) {}
+    public Product(Long nextId, String string, String string2, double d, String string3, int i, String; string4Long nextId; String string1; String string2, double d; String string3; int i1; String string4) {}
 
     public Product(String name, String description, BigDecimal price, Integer stock) {
         this.name = name;

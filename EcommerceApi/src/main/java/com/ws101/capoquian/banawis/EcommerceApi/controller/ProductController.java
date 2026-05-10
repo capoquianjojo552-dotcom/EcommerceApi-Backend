@@ -1,5 +1,9 @@
 package com.ws101.capoquian.banawis.EcommerceApi.controller;
 
+import com.ws101.capoquian.banawis.EcommerceApi.dto.CreateProductDto;
+import com.ws101.capoquian.banawis.EcommerceApi.model.Product;
+import com.ws101.capoquian.banawis.EcommerceApi.service.ProductService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,12 +41,15 @@ public class ProductController {
 
     // POST /api/products - Create new product in DB
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product savedProduct = productService.createProduct(product);
-        return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
-    }
-
+@PreAuthorize("hasRole('ADMIN')")
+public Product createProduct(@Valid @RequestBody CreateProductDto productDto) {
+    Product product = new Product();
+    product.setName(productDto.getName());
+    product.setDescription(productDto.getDescription());
+    product.setPrice(productDto.getPrice());
+    product.setStock(productDto.getStock());
+    return productService.saveProduct(product);
+}
     // PUT /api/products/{id} - Update product in DB
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {

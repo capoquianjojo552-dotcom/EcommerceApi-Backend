@@ -1,44 +1,54 @@
 package com.ws101.capoquian.banawis.EcommerceApi.model;
 
-
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.Locale.Category;
+
+import org.antlr.v4.runtime.misc.NotNull;
 
 /**
  * Product entity representing items in the e-commerce store.
  * One Category can have many Products - ManyToOne relationship.
  */
-@Entity
+
+    @Entity
 @Table(name = "products")
 public class Product {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
+    
+    @NotBlank(message = "Name is required")
     private String name;
-
+    
     private String description;
-
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
-
+    
+    @NotNull(message = "Price is required")
+    @Min(value = 0, message = "Price must be positive")
+    private Double price;
+    
+    private String category;
+    
+    @Min(value = 0, message = "Stock cannot be negative")
     private Integer stock;
+    
+    private String imageUrl;
 
-    // Many Products belong to One Category
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
+    // Default constructor
+    public Product() {}
 
-    public Product(Long nextId, String string, String string2, double d, String string3, int i, String; string4Long nextId; String string1; String string2, double d; String string3; int i1; String string4) {}
-
-    public Product(String name, String description, BigDecimal price, Integer stock) {
+    // Constructor - 
+    public Product(String name, String description, Double price, String category, Integer stock, String imageUrl) {
         this.name = name;
         this.description = description;
         this.price = price;
+        this.category = category;
         this.stock = stock;
+        this.imageUrl = imageUrl;
     }
 
     // Getters and Setters

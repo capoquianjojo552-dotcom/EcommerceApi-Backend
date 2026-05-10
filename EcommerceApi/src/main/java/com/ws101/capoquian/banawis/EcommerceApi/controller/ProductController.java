@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * REST Controller for Product CRUD operations.
@@ -36,6 +37,7 @@ public class ProductController {
 
     // POST /api/products - Create new product in DB
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         Product savedProduct = productService.createProduct(product);
         return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);

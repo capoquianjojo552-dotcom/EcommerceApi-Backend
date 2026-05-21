@@ -15,3 +15,14 @@
 [NOTE: Add screenshot of browser console showing successful fetch() response with 200 OK]
 
 Note: Sorry sir my browser console and my sql table screenshot are pending due to local environment constraints, however my code are complete.
+
+
+## Lab 10 - JWT Authentication
+
+*Contributor:* masocorrobanawis066-create  
+*Task:* Implemented JWT Authentication and Authorization using Spring Security
+
+This lab covers:
+- JWT token generation and validation
+- Secure authentication flow with Spring Boot
+- Protected endpoints using Bearer token
